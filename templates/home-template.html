@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>template</title>
+</head>
+
+<body>
+    <div class="ui padded text container">
+    <div class="sixteen wide row">
+
+            <div class="column">
+                    <h2>geocoder</h2>
+                <p>
+                the bari geocoding service is made on top of <a href="https://github.com/pelias/pelias" target="_blank">pelias</a>, a modular open source project using elasticsearch.
+
+            </p>
+            <p>bari geocoder uses multiple services from pelias, including libpostal for parsing and standardizing address, whoisonfirst for administrative boundary lookup, etc. with an additional service for normilizing addresses and a reverse proxy for adding attributes to the response.</p>
+                <!-- <h4>
+                    Geocoding is the process of matching an address or other text to its corresponding geographic coordinates.
+                    </h4> -->
+
+            <p> we followed the pelias api's format for the way the service accepts search requests:
+                </p>
+               <pre  class="prettyprint lang-html"><code class="bash">
+                                
+               http://128.31.25.48/geosearch/text=5+colliston+rd+02135
+               \___/  \__________/\_________/\_______________________/
+                 |          |          |                  |
+                 scheme     domain     path               query
+          </code></pre>
+                          <!-- </div> -->
+                       
+             <!-- <hr> -->
+
+            
+            
+
+
+
+            <p> 
+                NGINX is used as a reverse proxy to forward the requests to a nodejs web application the passes the address to elasticsearch, parses the respond, and looks up the parcels data from postgres. 
+                the additional parcel data is attached to the response before returning it to he clients.    
+               
+            </p>
+            <!-- <h3 class="ui header">response json</h3> -->
+            <p> 
+                the  response from the service is a json with the following format:
+
+
+            </p>
+<pre  class="prettyprint lang-json">
+                <code>
+                {
+                    geocoding: {...},
+                    type: "FeatureCollection",
+                    features: [
+                        {...},
+                        {...},
+                        {...},
+                        {...},
+                        {...},
+                        {...},
+                        {...},
+                        {...},
+                        {...},
+                        {...}
+                    ],
+                    bbox: [...],
+                    feature_sources: [
+                        {...},
+                        {...},
+                        {...},
+                        {...},
+                        {...},
+                        {...},
+                        {...},
+                        {...},
+                        {...},
+                        {...}
+                    ]
+                }
+                    
+            </code>
+
+        </pre>
+        <h3>response components</h3>
+        <ul>
+            <li>
+                
+                <strong>features</strong>
+                <p>are records returned by pelias from the elasticsearch address dataset</p>
+                <p>
+                        using the default pelias configuration, the service returns 10 closest match from elasticsearch with the following format.
+                     </p>
+                <pre  class="prettyprint lang-json">
+                        <code>
+            {
+                type: "Feature",
+                geometry: {
+                    type: "Point",
+                    coordinates: [
+                        -71.16004,
+                        42.340359
+                    ]
+                },
+                properties: {
+                    id: "59251-p-2205284000",
+                    gid: "parcels:address:59251-p-2205284000",
+                    layer: "address",
+                    source: "parcels",
+                    source_id: "59251-p-2205284000",
+                    name: "2135COMMONWEALTHAVE",
+                    housenumber: "2135",
+                    street: "COMMONWEALTH AVE",
+                    postalcode: "02135",
+                    confidence: 0.878,
+                    accuracy: "point",
+                    label: "2135COMMONWEALTHAVE"
+                }
+            }
+                        </code>
+                    </pre>
+        
+                
+            </li>
+
+
+            <li>
+                
+                    <strong>feature_sources</strong>
+                    <p>are the parcel's attributes returned from the postgres database</p>
+                    <p>
+                            the list of attributes depends on the input parcels data that is used to populate the service
+                         </p>
+                    <pre  class="prettyprint lang-json">
+                            <code>
+            {
+                land_parcel_id: "2102108000",
+                num_properties: "29",
+                lu: "CD",
+                numunits: "28",
+                own_occ: "0.357142857142857",
+                x: "-71.14578115",
+                y: "42.33969433",
+                av_land: "0",
+                av_bldg: "8732700",
+                land_sf: "10238",
+                yr_built: "1920",
+                yr_remod: "1984",
+                gross_area: "17893",
+                ilratio: "0",
+                num_floors: "1",
+                r_bldg_styl: "",
+                owner_address: "345 BOYLSTON ST STE 201 NEWTON MA 02459_",
+                zip: "2135",
+                blk_id_10: "250250005042014",
+                minnum_1: "15",
+                maxnum_1: "19",
+                street_1: "COLLISTON",
+                suffix_1: "RD",
+                tlid_1: "85696069",
+                minnum_2: "NA",
+                maxnum_2: "NA",
+                street_2: "NA",
+                suffix_2: "NA",
+                tlid_2: "NA",
+                bg_id_10: "250250005042",
+                ct_id_10: "25025000504",
+                nsa_name: "18",
+                bra_pd: "1"
+            }
+                            </code>
+                        </pre>
+            
+                    
+                </li>
+
+
+        </ul>
+       
+        
+    </div>
+        </div>  
+
+
+
+    
+
+    </div>
+</div>
+
+</body>
+
+</html>

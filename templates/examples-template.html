@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>template</title>
+</head>
+
+<body>
+        <div class="ui padded text container">
+                <div class="sixteen wide row">
+            
+                        <div class="column">
+
+
+        <h3 class="ui header">python example</h3>
+        <p>
+        example with python using the requests module <a href="http://128.31.25.48:8881/notebooks/jovyan/work/Pyexample.ipynb" target="_blank">here</a>.
+
+        <pre class="prettyprint lang-python">
+            <code class="language-python">
+import requests
+import pandas
+
+# read the file containing the addresses with pandas
+
+df = pandas.read_csv("Boston_hospitals.csv")
+
+# defining a function to apply to each row
+
+def geocode(ad, zipc):
+    if len("{0}".format(zipc)) == 4:
+        zipc = "0{0}".format(zipc)
+        try:
+            print(ad,zipc)
+            re = requests.get("http://128.31.25.48/geosearch/text={0}+{1}".format(ad.replace(" ","+"),zipc), timeout=3)
+            re_js = re.json()
+            features = list()
+            for i in range(0,len(re_js["features"])-1):
+                f = re_js["features"][i]
+                print(f["properties"]["accuracy"])
+                print(f["properties"]["confidence"])
+                print(re_js["feature_sources"][i])
+            ret = re_js["feature_sources"][0]["land_parcel_id"]
+        except:
+            ret = "no match"
+            pass
+    return ret
+
+# apply the geocoding function to the dataframe and
+# populate a parcel_id column
+
+df["parcel_id"] = df.apply(lambda row: geocode(row["AD"], row["ZIPCODE"]),axis=1)
+            </code>
+        </pre>
+        </p>
+
+
+        <h3 class="ui header">R example</h3>
+        <p>see the example with a jupyter notebook with a R kernel <a href="http://128.31.25.48:8881/notebooks/jovyan/work/Rexample.ipynb">here</a>.
+        </p>
+
+</div>
+</div>
+</div>
+
+</body>
+
+</html>

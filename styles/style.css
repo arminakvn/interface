@@ -1,0 +1,27 @@
+#searchbyfile {
+    display: none;
+}
+
+#searchbylineform {
+    display: none;
+}
+
+#click_about_modal:hover {
+    cursor: pointer
+}
+
+#lineresults {
+    display: none;
+}
+
+#icons {
+    display: none;
+}
+
+#byaddress {
+    margin: 10px 0px 10px 0px;
+}
+
+#header-template {
+    margin: 15px 15px 15px 15px;
+}
